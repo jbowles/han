@@ -18,54 +18,58 @@ Consider the following example.
 **Note**: The User resource is actually the same across all states.
 The difference being the available transitions from each state.
 
-Because HAN is concerned with resources, their states & transitions,
+Because HAN is concerned with resources (their states & transitions),
 it makes no assumptions related to API consumers & does not presume to dictate UI concerns.
 
 ## Data Structures
 
-#### Resource
+### Resource
+
+A resource is a container that wraps a custom value & includes hypermedia meta data.
 
 ```javascript
 {
   han: true,       // indicates that this is a HAN resource
   version: "",     // the resource version
   name: "",        // the name of the resource
-  value: {} || [], // the resource value
+  value: {},       // the resource value
   action: {},      // [the action performed to obtain the resource]
   transitions: [], // the navigational actions that can be performed with the resource
   errors: []       // the errors encounted while obtaining the resource
 }
 ```
 
-##### Resource Values
+#### Resource Values
 
-Resource `values` may be either a list (array) or an object (associative array).
-Values contain metadata about their type.
+Resource values may contain an object (associative array) or a list (array).
+Values contain metadata that describe their contents.
 
-###### List
-
-```javascript
-{
-  value : {
-    type: "list", // the type of value [list, object]
-    count: 0,     // the number of items in the list (required for list types)
-    items : []    // this list of items
-  }
-}
-```
-
-###### Object
+##### Object Value
 
 ```javascript
 {
-  value : {
+  value: {
     type: "object", // the type of value [list, object]
     item: {}        // the item
   }
 }
 ```
 
-#### Action
+##### List Value
+
+```javascript
+{
+  value: {
+    type: "list", // the type of value [list, object]
+    count: 0,     // the number of items in the list (required for list types)
+    items: []     // this list of items
+  }
+}
+```
+
+### Action
+
+An action describes all necessary info required to make a transition for a given resource.
 
 ```javascript
 {
@@ -79,7 +83,7 @@ Values contain metadata about their type.
 }
 ```
 
-#### Error
+### Error
 
 ```javascript
 {
@@ -92,9 +96,9 @@ Values contain metadata about their type.
 
 ## Examples
 
-#### Basic with object value
+### Basic ([object value](#object-value))
 
-This example illustrates the create user response described above. It contains a value of Object type.
+This example illustrates the "create user" response described above.
 
 ```javascript
 {
@@ -114,7 +118,7 @@ This example illustrates the create user response described above. It contains a
     href: "http://api.example.com/users",
     verbs: [ "POST" ],
     headers: {
-      "Accept": "application/vnd.example.v1+json"
+      Accept: "application/vnd.example.v1+json"
     },
     formats: [ "json" ],
     params: {
@@ -128,7 +132,7 @@ This example illustrates the create user response described above. It contains a
       href: "http://api.example.com/users/1",
       verbs: [ "PUT" ],
       headers: {
-        "Accept": "application/vnd.example.v1+json"
+        Accept: "application/vnd.example.v1+json"
       },
       formats: [ "json" ],
       params: {
@@ -141,7 +145,7 @@ This example illustrates the create user response described above. It contains a
       href: "http://api.example.com/users/1",
       verbs: [ "DELETE" ],
       headers: {
-        "Accept": "application/vnd.example.v1+json"
+        Accept: "application/vnd.example.v1+json"
       },
       formats: [ "json" ],
       params: {}
@@ -151,9 +155,9 @@ This example illustrates the create user response described above. It contains a
 }
 ```
 
-#### Basic with list value
+### Basic ([list value](#list-value))
 
-This example illustrates a user search.
+This example illustrates a "find users" call.
 
 ```javascript
 {
@@ -162,11 +166,11 @@ This example illustrates a user search.
   name: "User",
   value: {
     type: "list",
-    count: 1,
+    count: 3,
     items: [ // the items are your custom objects
-      { "id": 1, "name": "Han Solo" },
-      { "id": 2, "name": "Luke Skywalker" },
-      { "id": 3, "name": "Princess Leia" }
+      { id: 1, name: "Han Solo" },
+      { id: 2, name: "Luke Skywalker" },
+      { id: 3, name: "Princess Leia" }
     ]
   },
   action: { // the action that was invoked to receive this response
@@ -175,11 +179,11 @@ This example illustrates a user search.
     href: "http://api.example.com/users",
     verbs: [ "POST" ],
     headers: {
-      "Accept": "application/vnd.example.v1+json"
+      Accept: "application/vnd.example.v1+json"
     },
     formats: [ "json" ],
     params: {
-      name: "Han Solo"
+      team: "Rebel Alliance"
     }
   },
   transitions: [] // note: no transitions are available for the search result itself
@@ -187,7 +191,7 @@ This example illustrates a user search.
 }
 ```
 
-#### Embedded HAN Resources
+### Embedded HAN Resources
 
 HAN resource values may contain embedded HAN resources.
 
